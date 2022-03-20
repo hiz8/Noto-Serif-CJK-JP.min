@@ -2,6 +2,8 @@
 
 This is Subset of the [Noto Serif CJK JP](http://www.google.com/get/noto/help/cjk/) for the size down.
 
+- [DEMO](https://hiz8.github.io/Noto-Serif-CJK-JP.min/#demo)
+
 ## Typefaces
 
 - Black
@@ -85,3 +87,7 @@ This is Subset of the [Noto Serif CJK JP](http://www.google.com/get/noto/help/cj
 - Android 2.2+
 
 Variable fonts feature is available in [supported browsers](https://caniuse.com/variable-fonts).
+
+## Related projects
+
+- [Noto-Sans-CJK-JP.min](https://github.com/hiz8/Noto-Sans-CJK-JP.min)
