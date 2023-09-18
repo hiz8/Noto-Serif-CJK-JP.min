@@ -2,7 +2,7 @@
 
 This is Subset of the [Noto Serif CJK JP](http://www.google.com/get/noto/help/cjk/) for the size down.
 
-- [DEMO](https://hiz8.github.io/Noto-Serif-CJK-JP.min/#demo)
+[日本語](https://hiz8.github.io/Noto-Serif-CJK-JP.min/#demo) / [English](https://hiz8.github.io/Noto-Serif-CJK-JP.min/en/#demo)
 
 ## Typefaces
 
