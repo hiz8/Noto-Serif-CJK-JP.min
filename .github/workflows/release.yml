@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create zip from docs/fonts
+        run: |
+          mkdir -p release
+          cd docs/fonts
+          zip -j "../../release/NotoSerifCJKjp-min-${GITHUB_REF_NAME}.zip" *.min.*
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            "release/NotoSerifCJKjp-min-${GITHUB_REF_NAME}.zip"
