@@ -34,8 +34,19 @@ function fail(msg) {
   process.exit(1);
 }
 
+function winQuote(arg) {
+  if (arg === '' || /[\s"^&|<>]/.test(arg)) {
+    return `"${String(arg).replace(/"/g, '""')}"`;
+  }
+  return arg;
+}
+
 function spawn(cmd, args, opts) {
-  return spawnSync(cmd, args, { cwd: repoRoot, shell: WIN32, ...opts });
+  return spawnSync(cmd, WIN32 ? args.map(winQuote) : args, {
+    cwd: repoRoot,
+    shell: WIN32,
+    ...opts,
+  });
 }
 
 function run(cmd, args) {
