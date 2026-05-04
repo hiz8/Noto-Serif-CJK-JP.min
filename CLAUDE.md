@@ -9,21 +9,22 @@ This repo produces size-reduced subsets of the [Noto Serif CJK JP](http://www.go
 ## Build
 
 ```sh
-# Prereq: install Python fonttools so `pyftsubset` is on PATH, plus zopfli & brotli
-pip install fonttools zopfli brotli
+# Prereq: Node 18+ (uses fs/promises). No Python toolchain needed.
+npm install
 
-# Place the source Noto Serif CJK JP .otf files in ./src/ (gitignored)
+# Place the source Noto Serif CJK JP .otf (or .ttf) files in ./src/ (gitignored)
 # Then run the subsetter:
-node build.js
+npm start    # equivalent to: node build.js
 ```
 
 `build.js` does the following:
-1. Concatenates every file under `Letters/` into a single temp file `tmpTextFile.txt`.
-2. Globs `*.otf` from `./src/`.
-3. For each font × each of `ttf` / `woff` / `woff2`, shells out to `pyftsubset` with `--layout-features='*' --no-hinting` (and `--with-zopfli --desubroutinize` for woff/woff2), writing `<name>.min.<ext>` into `./dist/`.
-4. Deletes `tmpTextFile.txt` after the last extension of the last font.
+1. Concatenates every file under `Letters/` in memory — no on-disk temp file.
+2. Scans `./src/` for `*.otf` and `*.ttf` source fonts.
+3. For each font × each of `sfnt` / `woff` / `woff2`, calls `harfbuzzjs/hb-subset.wasm` directly to subset the input, **dropping the `GSUB`, `GPOS`, `GDEF`, `kern`, `morx`, `mort` tables** via `HB_SUBSET_SETS_DROP_TABLE_TAG` plus the `NO_HINTING | DESUBROUTINIZE | NO_LAYOUT_CLOSURE` flags. The result is wrapped to the requested format via [`fontverter`](https://github.com/papandreou/fontverter) and written as `<name>.min.{ttf,woff,woff2}` into `./dist/`. Per-font failures are logged and the build continues, exiting non-zero only at the end if any target failed. The output preserves the input outline format (CFF/CFF2 for OTF, glyf for TTF) under the `.min.ttf` extension — `.min.ttf` for an OTF source is technically OTF-inside-a-.ttf-named-file, which every browser handles.
 
-There is no `package.json`, no test suite, and no lint script. `.prettierrc` (`singleQuote`, `trailingComma: all`) is the only style config.
+Stripping the layout tables is the main extra size lever over a plain subset: CJK GSUB lookups (alternates, vertical forms) and GPOS kerning data dwarf the actual glyph outlines for a small subset, and browsers fall back to default glyph mapping without GSUB/GPOS — fine for horizontal Web body text. Trade-off: vertical writing (`vert`/`vrt2`), a few CJK punctuation alternates, and kerning regress. To restore any of those, narrow `DROP_TABLES` in `build.js`.
+
+There is no test suite and no lint script. `.prettierrc` (`singleQuote`, `trailingComma: all`) is the only style config.
 
 ## Repo layout — what's tracked vs generated
 
@@ -38,6 +39,5 @@ The README's "Packaging Letters" section mirrors the contents of `Letters/`. If 
 
 ## Gotchas
 
-- `build.js` writes a temp file (`tmpTextFile.txt`) at the repo root and unlinks it only after the last `pyftsubset` call. A failure mid-build can leave it behind — safe to delete manually.
-- The build's exception handler references an undefined `err` (`console.error(err)` inside the `catch (e)`), so a `pyftsubset` failure prints `ReferenceError` instead of the real error. Run the failing `pyftsubset` command by hand to see the actual diagnostic.
-- `--layout-features='*'` keeps all OpenType features (kerning, alternates, etc.); dropping it would shrink files further at the cost of typographic features. This is intentional.
+- The harfbuzz wasm has a single linear memory, so `subsetToSfnt()` is cached as a module-level singleton and `main()` drives `buildOne()` strictly sequentially. Parallelizing would corrupt the wasm heap; revisit the singleton if that ever changes.
+- `GSUB`/`GPOS`/`GDEF`/`kern`/`morx`/`mort` are dropped by design — the size win is large but the cost is loss of vertical writing (`vert`/`vrt2`), a few CJK punctuation alternates, and kerning. To restore any of those, narrow `DROP_TABLES` in `build.js`.
