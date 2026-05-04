@@ -25,14 +25,14 @@ This is Subset of the [Noto Serif CJK JP](http://www.google.com/get/noto/help/cj
 
 | Weight     | otf (Original) | ttf       | woff2     |
 | :--------- | :------------- | :-------- | :-------- |
-| ExtraLight | `20.3 MB`      | `1.25 MB` | `813 KB`  |
-| Light      | `23.0 MB`      | `1.35 MB` | `878 KB`  |
-| Regular    | `23.3 MB`      | `1.36 MB` | `893 KB`  |
-| Medium     | `23.5 MB`      | `1.37 MB` | `908 KB`  |
-| SemiBold   | `23.5 MB`      | `1.38 MB` | `915 KB`  |
-| Bold       | `24.2 MB`      | `1.39 MB` | `939 KB`  |
-| Black      | `22.9 MB`      | `1.34 MB` | `909 KB`  |
-| Variable   | `52.2 MB`      | `2.87 MB` | `1.42 MB` |
+| ExtraLight | `20.4 MB`      | `1.14 MB` | `668 KB`  |
+| Light      | `23.4 MB`      | `1.14 MB` | `718 KB`  |
+| Regular    | `23.4 MB`      | `1.14 MB` | `727 KB`  |
+| Medium     | `23.7 MB`      | `1.14 MB` | `738 KB`  |
+| SemiBold   | `23.6 MB`      | `1.14 MB` | `743 KB`  |
+| Bold       | `24.4 MB`      | `1.14 MB` | `763 KB`  |
+| Black      | `23.0 MB`      | `1.14 MB` | `742 KB`  |
+| Variable   | `52.8 MB`      | `2.25 MB` | `1.17 MB` |
 
 ## Packaging Letters
 
@@ -69,8 +69,9 @@ This is Subset of the [Noto Serif CJK JP](http://www.google.com/get/noto/help/cj
   font-family: 'Noto Serif Japanese';
   font-style: normal;
   font-weight: 400;
-  src: url('../fonts/NotoSerifCJKjp-Regular.min.woff2') format('woff2'), url('../fonts/NotoSerifCJKjp-Regular.min.woff')
-      format('woff'),
+  src:
+    url('../fonts/NotoSerifCJKjp-Regular.min.woff2') format('woff2'),
+    url('../fonts/NotoSerifCJKjp-Regular.min.woff') format('woff'),
     url('../fonts/NotoSerifCJKjp-Regular.min.ttf') format('truetype');
 }
 ```
