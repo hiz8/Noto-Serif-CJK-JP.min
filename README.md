@@ -32,7 +32,7 @@ Latest minified font files are published as a zip on the [Releases page](https:/
 | :--------- | :------------- | :-------- | :-------- |
 | ExtraLight | `20.4 MB`      | `1.14 MB` | `668 KB`  |
 | Light      | `23.4 MB`      | `1.14 MB` | `718 KB`  |
-| Regular    | `23.4 MB`      | `1.14 MB` | `727 KB`  |
+| Regular    | `23.4 MB`      | `1.14 MB` | `726 KB`  |
 | Medium     | `23.7 MB`      | `1.14 MB` | `738 KB`  |
 | SemiBold   | `23.6 MB`      | `1.14 MB` | `743 KB`  |
 | Bold       | `24.4 MB`      | `1.14 MB` | `763 KB`  |
