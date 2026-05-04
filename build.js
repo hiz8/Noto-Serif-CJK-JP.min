@@ -33,6 +33,11 @@ const hbTag = (s) =>
 
 const DROP_TAGS = DROP_TABLES.map(hbTag);
 
+const hbCheck = (ptr, name) => {
+  if (ptr === 0) throw new Error(`${name} returned zero`);
+  return ptr;
+};
+
 // Cached as a module-level singleton: the harfbuzz wasm has a single linear
 // memory, so concurrent subsets would corrupt each other. Safe today because
 // main() drives buildOne() sequentially — revisit if that ever changes.
@@ -61,19 +66,16 @@ async function subsetToSfnt(originalFont, text) {
   // harfbuzz's hb-subset only accepts SFNT input.
   const sfntInput = await fontverter.convert(originalFont, SFNT);
 
-  const input = hb.hb_subset_input_create_or_fail();
-  if (input === 0) {
-    throw new Error('hb_subset_input_create_or_fail returned zero');
-  }
+  const input = hbCheck(
+    hb.hb_subset_input_create_or_fail(),
+    'hb_subset_input_create_or_fail',
+  );
 
   let fontPtr = 0;
   let face = 0;
   let subset = 0;
   try {
-    fontPtr = hb.malloc(sfntInput.byteLength);
-    if (fontPtr === 0) {
-      throw new Error('hb malloc returned zero');
-    }
+    fontPtr = hbCheck(hb.malloc(sfntInput.byteLength), 'hb malloc');
     heapOf(hb).set(new Uint8Array(sfntInput), fontPtr);
     const blob = hb.hb_blob_create(fontPtr, sfntInput.byteLength, 2, 0, 0);
     face = hb.hb_face_create(blob, 0);
@@ -87,9 +89,8 @@ async function subsetToSfnt(originalFont, text) {
     // - NO_HINTING strips TT hinting bytecode (no-op for CFF/CFF2 sources but
     //   meaningful for TTF/glyf inputs).
     // - DESUBROUTINIZE inlines CFF subroutines: makes the SFNT slightly larger
-    //   on its own, but compresses materially better as WOFF2 — exactly what
-    //   the old `pyftsubset --with-zopfli --desubroutinize` invocation aimed
-    //   for. Important for Noto Serif CJK JP since its outlines are CFF2.
+    //   on its own, but compresses materially better as WOFF2. Important for
+    //   Noto Serif CJK JP since its outlines are CFF2.
     // - NO_LAYOUT_CLOSURE: GSUB is being dropped anyway, so closure would only
     //   waste work and keep glyphs that aren't reachable without GSUB.
     hb.hb_subset_input_set_flags(
@@ -105,10 +106,7 @@ async function subsetToSfnt(originalFont, text) {
       hb.hb_set_add(unicodes, c.codePointAt(0));
     }
 
-    subset = hb.hb_subset_or_fail(face, input);
-    if (subset === 0) {
-      throw new Error('hb_subset_or_fail returned zero');
-    }
+    subset = hbCheck(hb.hb_subset_or_fail(face, input), 'hb_subset_or_fail');
 
     const result = hb.hb_face_reference_blob(subset);
     const offset = hb.hb_blob_get_data(result, 0);
@@ -177,8 +175,7 @@ async function buildOne(srcFile, text) {
 async function main() {
   const [text, srcFonts] = await Promise.all([readGlyphSet(), listSrcFonts()]);
   if (srcFonts.length === 0) {
-    console.error(`No .otf or .ttf files found in ${SRC_DIR}`);
-    process.exit(1);
+    throw new Error(`No .otf or .ttf files found in ${SRC_DIR}`);
   }
   await fs.mkdir(DIST_DIR, { recursive: true });
 
@@ -191,8 +188,7 @@ async function main() {
     totalFailed += await buildOne(f, text);
   }
   if (totalFailed > 0) {
-    console.error(`\n${totalFailed} target(s) failed.`);
-    process.exit(1);
+    throw new Error(`${totalFailed} target(s) failed.`);
   }
 }
 
