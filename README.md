@@ -23,6 +23,7 @@ This is Subset of the [Noto Serif CJK JP](http://www.google.com/get/noto/help/cj
 
 ## Size
 
+<!-- size-table:start -->
 | Weight     | otf (Original) | ttf       | woff2     |
 | :--------- | :------------- | :-------- | :-------- |
 | ExtraLight | `20.4 MB`      | `1.14 MB` | `668 KB`  |
@@ -33,6 +34,7 @@ This is Subset of the [Noto Serif CJK JP](http://www.google.com/get/noto/help/cj
 | Bold       | `24.4 MB`      | `1.14 MB` | `763 KB`  |
 | Black      | `23.0 MB`      | `1.14 MB` | `742 KB`  |
 | Variable   | `52.8 MB`      | `2.25 MB` | `1.17 MB` |
+<!-- size-table:end -->
 
 ## Packaging Letters
 
